@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         signupButton.setOnClickListener(view -> {
-            Toast.makeText(this, "Signup button Clicked", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+            startActivity(intent);
         });
 
     }

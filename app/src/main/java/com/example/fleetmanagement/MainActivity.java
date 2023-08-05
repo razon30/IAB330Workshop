@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Varibales
+    // Objects
     private TextView titleTextView;
     private Button loginButton;
     private Button signupButton;

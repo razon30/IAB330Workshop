@@ -50,6 +50,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
             vehicleImage = itemView.findViewById(R.id.vehicleImage);
             vehicleName = itemView.findViewById(R.id.vehicleName);
             vehicleType = itemView.findViewById(R.id.vehicleType);
+
         }
     }
 }

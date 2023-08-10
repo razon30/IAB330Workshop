@@ -3,10 +3,12 @@ package com.example.fleetmanagement;
 public class Vehicle {
     private String name;
     private String type;
+    private String vehicleNumber;
 
-    public Vehicle(String name, String type) {
+    public Vehicle(String name, String type, String vehicleNumber) {
         this.name = name;
         this.type = type;
+        this.vehicleNumber = vehicleNumber;
     }
 
     public String getName() {
@@ -23,5 +25,13 @@ public class Vehicle {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    public void setVehicleNumber(String vehicleNumber) {
+        this.vehicleNumber = vehicleNumber;
     }
 }

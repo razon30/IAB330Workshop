@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fleetmanagement.Utils.SharedPrefManager;
+
 public class MainActivity extends AppCompatActivity {
 
     // Objects
@@ -16,25 +18,41 @@ public class MainActivity extends AppCompatActivity {
     private Button loginButton;
     private Button signupButton;
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (SharedPrefManager.isLoggedIn()){
+            Intent intent = new Intent(MainActivity.this, VehicleListActivity.class);
+            startActivity(intent);
+        }
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        //Linking the views
-        setViewIds();
-
-        //Setting Click listeners
-        loginButton.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        if (SharedPrefManager.isLoggedIn()) {
+            Intent intent = new Intent(MainActivity.this, VehicleListActivity.class);
             startActivity(intent);
-        });
+        } else {
+            setContentView(R.layout.activity_main);
+            //Linking the views
+            setViewIds();
 
-        signupButton.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-            startActivity(intent);
-        });
+            //Setting Click listeners
+            loginButton.setOnClickListener(view -> {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            });
 
+            signupButton.setOnClickListener(view -> {
+                Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void setViewIds() {

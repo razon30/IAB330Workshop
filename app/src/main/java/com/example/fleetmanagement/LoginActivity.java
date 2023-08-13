@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.fleetmanagement.Utils.SharedPrefManager;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
@@ -28,6 +30,11 @@ public class LoginActivity extends AppCompatActivity {
             if (isValidCredentials(email, password)) {
                 // Successful login, navigate to next activity
                 Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+
+                SharedPrefManager.setLoginState(true);
+                Intent intent = new Intent(this, VehicleListActivity.class);
+                startActivity(intent);
+
             } else {
                 // Invalid credentials, show error message
                 Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();

@@ -3,6 +3,9 @@ package com.example.fleetmanagement.Utils;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.example.fleetmanagement.MainActivity;
+import com.example.fleetmanagement.VehicleListActivity;
+
 public class MyApp extends Application {
 
     public static final String PREF_NAME = "MyAppPrefs";

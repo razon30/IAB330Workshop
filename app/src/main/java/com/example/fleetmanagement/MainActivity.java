@@ -20,17 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (SharedPrefManager.isLoggedIn()){
-            Intent intent = new Intent(MainActivity.this, VehicleListActivity.class);
-            startActivity(intent);
-        }
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

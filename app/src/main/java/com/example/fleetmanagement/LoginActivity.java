@@ -3,6 +3,7 @@ package com.example.fleetmanagement;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +33,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
 
                 SharedPrefManager.setLoginState(true);
+                if (email.equals("ad@ad.com")){
+                    SharedPrefManager.setAdmin(true);
+                }else {
+                    SharedPrefManager.setAdmin(false);
+                }
                 Intent intent = new Intent(this, VehicleListActivity.class);
                 startActivity(intent);
 
@@ -52,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isValidCredentials(String email, String password) {
         // Perform validation logic here
         // Return true if credentials are valid, false otherwise
-        return email.equals("ex@ex.com") && password.equals("pass123");
+        return (email.equals("ex@ex.com") && password.equals("ex123")) || (email.equals("ad@ad.com") && password.equals("ad123"));
     }
 }
 

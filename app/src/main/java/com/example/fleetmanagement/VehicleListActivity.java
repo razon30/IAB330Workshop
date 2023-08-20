@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,13 @@ public class VehicleListActivity extends AppCompatActivity {
 
         vehicleAdapter = new VehicleAdapter(vehicleList);
         recyclerView.setAdapter(vehicleAdapter);
+
+        vehicleAdapter.setOnItemClickListener(position -> {
+            // Handle recyclerview item click here
+            // For example, you can open a new activity
+            Toast.makeText(VehicleListActivity.this,
+                    vehicleList.get(position).getName(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     // Replace this method with your actual vehicle data

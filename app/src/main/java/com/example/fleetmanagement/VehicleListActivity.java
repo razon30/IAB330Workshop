@@ -4,18 +4,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.example.fleetmanagement.Utils.SharedPrefManager;
-
-import android.widget.Toast;
-
 import java.util.ArrayList;
 
 public class VehicleListActivity extends AppCompatActivity {

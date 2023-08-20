@@ -2,13 +2,20 @@ package com.example.fleetmanagement;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.fleetmanagement.DB.Vehicle;
+import com.example.fleetmanagement.DB.VehicleDao;
+import com.example.fleetmanagement.Utils.MyApp;
 import com.example.fleetmanagement.Utils.SharedPrefManager;
 import java.util.ArrayList;
 
@@ -66,7 +73,13 @@ public class VehicleListActivity extends AppCompatActivity {
 
             // Add the new vehicle to the list
             Vehicle vehicle = new Vehicle(vehicleName, vehicleType);
-            vehicleList.add(0, vehicle); // Adding the vehicle at the beginning of the list (index = 0)
+
+            VehicleDao vehicleDao = MyApp.getAppDatabase().vehicleDao();
+            AsyncTask.execute(() -> {
+                vehicleDao.insert(vehicle);
+            });
+
+
             // Refresh the RecyclerView
             vehicleAdapter.notifyDataSetChanged();
         });
@@ -80,22 +93,15 @@ public class VehicleListActivity extends AppCompatActivity {
     // Replace this method with your actual vehicle data
     private ArrayList<Vehicle> generateDummyData() {
         ArrayList<Vehicle> vehicleList = new ArrayList<>();
-        vehicleList.add(new Vehicle("Car 1", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 1", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 2", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 2", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 3", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 3", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 4", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 4", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 5", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 5", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 6", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 6", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 7", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 7", "Heavy Duty"));
-        vehicleList.add(new Vehicle("Car 8", "Sedan"));
-        vehicleList.add(new Vehicle("Truck 8", "Heavy Duty"));
+
+        // Retrieve all vehicles asynchronously using LiveData
+        VehicleDao vehicleDao = MyApp.getAppDatabase().vehicleDao();
+        LiveData<ArrayList<Vehicle>> vehiclesLiveData = vehicleDao.getAllVehicles();
+        vehiclesLiveData.observe(this, vehicles -> {
+            // Handle the list of vehicles here
+            vehicleList.addAll(vehicles);
+        });
+
         // Add more vehicles as needed
         return vehicleList;
     }

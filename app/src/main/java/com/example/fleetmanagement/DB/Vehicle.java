@@ -1,6 +1,13 @@
-package com.example.fleetmanagement;
+package com.example.fleetmanagement.DB;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "vehicles")
 public class Vehicle {
+
+    @PrimaryKey(autoGenerate = true)
+    public int id;
     private String name;
     private String type;
 

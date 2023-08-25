@@ -18,6 +18,7 @@ import com.example.fleetmanagement.DB.VehicleDao;
 import com.example.fleetmanagement.Utils.MyApp;
 import com.example.fleetmanagement.Utils.SharedPrefManager;
 import java.util.ArrayList;
+import java.util.List;
 
 public class VehicleListActivity extends AppCompatActivity {
 
@@ -35,7 +36,8 @@ public class VehicleListActivity extends AppCompatActivity {
         btnAddNewVehicle = findViewById(R.id.btnAddVehicle);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        vehicleList = generateDummyData(); // Replace this with your actual vehicle data
+        vehicleList = new ArrayList<>();
+        getDataFromDatabase();
 
         vehicleAdapter = new VehicleAdapter(vehicleList);
         recyclerView.setAdapter(vehicleAdapter);
@@ -79,9 +81,8 @@ public class VehicleListActivity extends AppCompatActivity {
                 vehicleDao.insert(vehicle);
             });
 
-
             // Refresh the RecyclerView
-            vehicleAdapter.notifyDataSetChanged();
+            //vehicleAdapter.notifyDataSetChanged();
         });
 
         AlertDialog dialog = builder.create();
@@ -90,19 +91,15 @@ public class VehicleListActivity extends AppCompatActivity {
 
     }
 
-    // Replace this method with your actual vehicle data
-    private ArrayList<Vehicle> generateDummyData() {
-        ArrayList<Vehicle> vehicleList = new ArrayList<>();
-
+    private void getDataFromDatabase() {
         // Retrieve all vehicles asynchronously using LiveData
         VehicleDao vehicleDao = MyApp.getAppDatabase().vehicleDao();
-        LiveData<ArrayList<Vehicle>> vehiclesLiveData = vehicleDao.getAllVehicles();
+        LiveData<List<Vehicle>> vehiclesLiveData = vehicleDao.getAllVehicles();
         vehiclesLiveData.observe(this, vehicles -> {
             // Handle the list of vehicles here
+            vehicleList.clear();
             vehicleList.addAll(vehicles);
+            vehicleAdapter.notifyDataSetChanged();
         });
-
-        // Add more vehicles as needed
-        return vehicleList;
     }
 }

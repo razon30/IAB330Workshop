@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Dao
 public interface VehicleDao {
@@ -21,6 +22,6 @@ public interface VehicleDao {
     void delete(Vehicle vehicle);
 
     @Query("SELECT * FROM vehicles")
-    LiveData<ArrayList<Vehicle>> getAllVehicles();
+    LiveData<List<Vehicle>> getAllVehicles();
 }
 

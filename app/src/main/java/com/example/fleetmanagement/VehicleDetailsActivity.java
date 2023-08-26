@@ -25,6 +25,8 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
         tvVehicleName = findViewById(R.id.tvVehicleName);
         tvVehicleType = findViewById(R.id.tvVehicleType);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnDelete = findViewById(R.id.btnDelete);
 
         vehicleDao = MyApp.getAppDatabase().vehicleDao();
 

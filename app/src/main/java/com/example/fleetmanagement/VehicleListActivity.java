@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -47,6 +48,11 @@ public class VehicleListActivity extends AppCompatActivity {
             // For example, you can open a new activity
             Toast.makeText(VehicleListActivity.this,
                     vehicleList.get(position).getName(), Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(VehicleListActivity.this, VehicleDetailsActivity.class);
+            Vehicle vehicle = vehicleList.get(position);
+            intent.putExtra("vehicleId",vehicle.id);
+            startActivity(intent);
         });
 
         if (SharedPrefManager.isAdmin()) {

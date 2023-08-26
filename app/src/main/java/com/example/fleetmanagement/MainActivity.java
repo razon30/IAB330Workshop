@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         if (SharedPrefManager.isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, VehicleListActivity.class);
             startActivity(intent);
+            finish();
         } else {
             setContentView(R.layout.activity_main);
             //Linking the views

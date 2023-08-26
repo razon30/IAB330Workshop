@@ -1,13 +1,20 @@
 package com.example.fleetmanagement;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fleetmanagement.DB.Vehicle;
 import com.example.fleetmanagement.DB.VehicleDao;
 import com.example.fleetmanagement.Utils.MyApp;
 
@@ -17,6 +24,7 @@ public class VehicleDetailsActivity extends AppCompatActivity {
     Button btnUpdate, btnDelete;
     VehicleDao vehicleDao;
     int vehicleId;
+    Vehicle vehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +41,29 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         if (getIntent().getIntExtra("vehicleId", -1) != -1){
             vehicleId = getIntent().getIntExtra("vehicleId", -1);
 
-            vehicleDao.getVehicleById(vehicleId).observe(this, vehicle -> {
-                tvVehicleName.setText("Vehicle Name: "+ vehicle.getName());
-                tvVehicleType.setText("Vehicle Type: "+ vehicle.getType());
+            vehicleDao.getVehicleById(vehicleId).observe(this, dbVehicle -> {
+                if (dbVehicle != null) {
+                    this.vehicle = dbVehicle;
+                    tvVehicleName.setText("Vehicle Name: " + this.vehicle.getName());
+                    tvVehicleType.setText("Vehicle Type: " + this.vehicle.getType());
+                }
+            });
+
+            btnUpdate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (vehicle != null) {
+                        updateTheVehicle();
+                    }
+                }
+            });
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (vehicle != null) {
+                        deleteTheVehicle();
+                    }
+                }
             });
 
         }else {
@@ -43,4 +71,54 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         }
 
     }
+
+
+    private void updateTheVehicle() {
+
+        // Creating the view to create the dialog. We are re-using the dialog we created in Week-4 to add new vehicle.
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_vehicle, null);
+        EditText editTextVehicleName = dialogView.findViewById(R.id.editTextVehicleName);
+        EditText editTextVehicleType = dialogView.findViewById(R.id.editTextVehicleType);
+
+        // Pre-set the current vehicle name and type to these edittext views.
+        editTextVehicleName.setText(vehicle.getName());
+        editTextVehicleType.setText(vehicle.getType());
+
+        //Creating the dialog builder to create the pop up dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        //Setting and implementing the update operation
+        builder.setPositiveButton("Update", (dialog, which) -> {
+            String vehicleName = editTextVehicleName.getText().toString();
+            String vehicleType = editTextVehicleType.getText().toString();
+
+            //update the values
+            vehicle.setName(vehicleName);
+            vehicle.setType(vehicleType);
+
+            AsyncTask.execute(() -> {
+                vehicleDao.update(vehicle);
+            });
+        });
+
+        // Setting the update cancellation
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // Do nothing or handle any other actions
+            dialog.cancel();
+        });
+
+        //Creating and showing the dialog.
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void deleteTheVehicle() {
+        AsyncTask.execute(() -> {
+            vehicleDao.delete(vehicle);
+            finish();
+        });
+    }
+
 }

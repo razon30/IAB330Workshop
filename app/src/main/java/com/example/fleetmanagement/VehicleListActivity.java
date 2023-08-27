@@ -27,22 +27,44 @@ public class VehicleListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button btnAddNewVehicle;
     private VehicleAdapter vehicleAdapter;
+    private Button btnSensorData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_list);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        btnAddNewVehicle = findViewById(R.id.btnAddVehicle);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        vehicleList = new ArrayList<>();
+        viewBinding();
+        initialising();
         getDataFromDatabase();
+        handleClickOnVehicleItem();
+        manageRoleBasedFeatures();
+        recordSensorData();
 
-        vehicleAdapter = new VehicleAdapter(vehicleList);
-        recyclerView.setAdapter(vehicleAdapter);
+    }
 
+    private void recordSensorData() {
+        btnSensorData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(VehicleListActivity.this, SensorActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void manageRoleBasedFeatures() {
+        if (SharedPrefManager.isAdmin()) {
+            btnAddNewVehicle.setVisibility(View.VISIBLE);
+            btnAddNewVehicle.setOnClickListener(view -> {
+                manageNewVehicleFunctionality();
+            });
+        } else {
+            btnAddNewVehicle.setVisibility(View.GONE);
+        }
+    }
+
+    private void handleClickOnVehicleItem() {
         vehicleAdapter.setOnItemClickListener(position -> {
             // Handle recyclerview item click here
             // For example, you can open a new activity
@@ -54,16 +76,19 @@ public class VehicleListActivity extends AppCompatActivity {
             intent.putExtra("vehicleId",vehicle.id);
             startActivity(intent);
         });
+    }
 
-        if (SharedPrefManager.isAdmin()) {
-            btnAddNewVehicle.setVisibility(View.VISIBLE);
-            btnAddNewVehicle.setOnClickListener(view -> {
-                manageNewVehicleFunctionality();
-            });
-        } else {
-            btnAddNewVehicle.setVisibility(View.GONE);
-        }
+    private void initialising() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        vehicleList = new ArrayList<>();
+        vehicleAdapter = new VehicleAdapter(vehicleList);
+        recyclerView.setAdapter(vehicleAdapter);
+    }
 
+    private void viewBinding() {
+        recyclerView = findViewById(R.id.recyclerView);
+        btnAddNewVehicle = findViewById(R.id.btnAddVehicle);
+        btnSensorData = findViewById(R.id.btnSensorData);
     }
 
     private void manageNewVehicleFunctionality() {

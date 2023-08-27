@@ -14,11 +14,14 @@
         android:theme="@style/Theme.FleetManagement"
         tools:targetApi="31">
         <activity
+            android:name=".SensorActivity"
+            android:exported="false" />
+        <activity
             android:name=".VehicleDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".VehicleListActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".SignupActivity"
             android:exported="false" />

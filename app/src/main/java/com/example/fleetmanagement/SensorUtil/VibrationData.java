@@ -1,4 +1,4 @@
-package com.example.fleetmanagement.SensorData;
+package com.example.fleetmanagement.SensorUtil;
 
 public class VibrationData {
     private long timestamp;

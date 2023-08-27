@@ -39,19 +39,9 @@ public class VehicleListActivity extends AppCompatActivity {
         getDataFromDatabase();
         handleClickOnVehicleItem();
         manageRoleBasedFeatures();
-        recordSensorData();
 
     }
 
-    private void recordSensorData() {
-        btnSensorData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(VehicleListActivity.this, SensorActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 
     private void manageRoleBasedFeatures() {
         if (SharedPrefManager.isAdmin()) {

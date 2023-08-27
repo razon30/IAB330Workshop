@@ -2,15 +2,12 @@ package com.example.fleetmanagement;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,45 +28,62 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vehicle_details);
 
-        tvVehicleName = findViewById(R.id.tvVehicleName);
-        tvVehicleType = findViewById(R.id.tvVehicleType);
-        btnUpdate = findViewById(R.id.btnUpdate);
-        btnDelete = findViewById(R.id.btnDelete);
+        bindViews();
+        initialisation();
+        populatingVehicleDetails();
 
-        vehicleDao = MyApp.getAppDatabase().vehicleDao();
+
+
+    }
+
+    private void populatingVehicleDetails() {
 
         if (getIntent().getIntExtra("vehicleId", -1) != -1){
             vehicleId = getIntent().getIntExtra("vehicleId", -1);
-
-            vehicleDao.getVehicleById(vehicleId).observe(this, dbVehicle -> {
-                if (dbVehicle != null) {
-                    this.vehicle = dbVehicle;
-                    tvVehicleName.setText("Vehicle Name: " + this.vehicle.getName());
-                    tvVehicleType.setText("Vehicle Type: " + this.vehicle.getType());
-                }
-            });
-
-            btnUpdate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (vehicle != null) {
-                        updateTheVehicle();
-                    }
-                }
-            });
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (vehicle != null) {
-                        deleteTheVehicle();
-                    }
-                }
-            });
-
+            retrievingAndSettingVehicleData(vehicleId);
+            handlingUpdateEvent();
+            handlingDeleteEvent();
         }else {
             Toast.makeText(this, "No Vehicle Id Found", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void handlingUpdateEvent() {
+        btnUpdate.setOnClickListener(view -> {
+            if (vehicle != null) {
+                updateTheVehicle();
+            }
+        });
+    }
+
+    private void handlingDeleteEvent() {
+        btnDelete.setOnClickListener(view -> {
+            if (vehicle != null) {
+                deleteTheVehicle();
+            }
+        });
+    }
+
+    private void retrievingAndSettingVehicleData(int vehicleId) {
+        vehicleDao.getVehicleById(vehicleId).observe(this, dbVehicle -> {
+            if (dbVehicle != null) {
+                this.vehicle = dbVehicle;
+                tvVehicleName.setText("Vehicle Name: " + this.vehicle.getName());
+                tvVehicleType.setText("Vehicle Type: " + this.vehicle.getType());
+            }
+        });
+    }
+
+    private void initialisation() {
+        vehicleDao = MyApp.getAppDatabase().vehicleDao();
+    }
+
+    private void bindViews() {
+        tvVehicleName = findViewById(R.id.tvVehicleName);
+        tvVehicleType = findViewById(R.id.tvVehicleType);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnDelete = findViewById(R.id.btnDelete);
     }
 
 

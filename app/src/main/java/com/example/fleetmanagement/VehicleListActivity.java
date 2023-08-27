@@ -6,7 +6,10 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -16,6 +19,7 @@ import android.widget.EditText;
 
 import com.example.fleetmanagement.DB.Vehicle;
 import com.example.fleetmanagement.DB.VehicleDao;
+import com.example.fleetmanagement.SensorUtil.FallDetectionService;
 import com.example.fleetmanagement.Utils.MyApp;
 import com.example.fleetmanagement.Utils.SharedPrefManager;
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ public class VehicleListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button btnAddNewVehicle;
     private VehicleAdapter vehicleAdapter;
+    private Intent serviceIntent;
+    private VehicleVibrationDataReceiver dataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +44,39 @@ public class VehicleListActivity extends AppCompatActivity {
         getDataFromDatabase();
         handleClickOnVehicleItem();
         manageRoleBasedFeatures();
-        recordSensorData();
+        manageSensorServices();
 
     }
 
-    private void recordSensorData() {
+    private void manageSensorServices() {
+        // Start the FallDetectionService
+        serviceIntent = new Intent(this, FallDetectionService.class);
+        startService(serviceIntent);
 
+        // Register the BroadcastReceiver
+        dataReceiver = new VehicleVibrationDataReceiver(); // Initialising the varibale
+        IntentFilter filter = new IntentFilter("VEHICLE_VIBRATION_DATA");// creating an instance of the filter that returns the vibrarion data
+        registerReceiver(dataReceiver, filter); // registering the filter with our dataReceiver
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the BroadcastReceiver
+        if (dataReceiver != null) {
+            unregisterReceiver(dataReceiver);
+        }
+    }
+
+    private class VehicleVibrationDataReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() != null && intent.getAction().equals("VEHICLE_VIBRATION_DATA")) {
+                // Receive the sensor data and update the UI if required.
+            }
+        }
+    }
+
 
     private void manageRoleBasedFeatures() {
         if (SharedPrefManager.isAdmin()) {

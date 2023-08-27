@@ -27,7 +27,6 @@ public class VehicleListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button btnAddNewVehicle;
     private VehicleAdapter vehicleAdapter;
-    private Button btnSensorData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +43,7 @@ public class VehicleListActivity extends AppCompatActivity {
     }
 
     private void recordSensorData() {
-        btnSensorData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(VehicleListActivity.this, SensorActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 
     private void manageRoleBasedFeatures() {
@@ -88,7 +81,6 @@ public class VehicleListActivity extends AppCompatActivity {
     private void viewBinding() {
         recyclerView = findViewById(R.id.recyclerView);
         btnAddNewVehicle = findViewById(R.id.btnAddVehicle);
-        btnSensorData = findViewById(R.id.btnSensorData);
     }
 
     private void manageNewVehicleFunctionality() {

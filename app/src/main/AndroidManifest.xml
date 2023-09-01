@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <application
         android:name=".Utils.MyApp"
         android:allowBackup="true"
@@ -13,15 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FleetManagement"
         tools:targetApi="31">
-        <activity
-            android:name=".SensorActivity"
+
+        <service
+            android:name=".SensorUtil.SensorService"
+            android:enabled="true"
             android:exported="false" />
-        <activity
-            android:name=".VehicleDetailsActivity"
-            android:exported="false" />
+
         <activity
             android:name=".VehicleListActivity"
             android:exported="true" />
+
+        <activity
+            android:name=".VehicleDetailsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".SignupActivity"
             android:exported="false" />

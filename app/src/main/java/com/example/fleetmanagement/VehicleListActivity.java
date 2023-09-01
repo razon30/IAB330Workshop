@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +20,8 @@ import android.widget.EditText;
 
 import com.example.fleetmanagement.DB.Vehicle;
 import com.example.fleetmanagement.DB.VehicleDao;
-import com.example.fleetmanagement.SensorUtil.FallDetectionService;
+import com.example.fleetmanagement.SensorUtil.AccelerometerData;
+import com.example.fleetmanagement.SensorUtil.SensorService;
 import com.example.fleetmanagement.Utils.MyApp;
 import com.example.fleetmanagement.Utils.SharedPrefManager;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class VehicleListActivity extends AppCompatActivity {
     private Button btnAddNewVehicle;
     private VehicleAdapter vehicleAdapter;
     private Intent serviceIntent;
-    private VehicleVibrationDataReceiver dataReceiver;
+    private SensorDataReceiver dataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +51,13 @@ public class VehicleListActivity extends AppCompatActivity {
     }
 
     private void manageSensorServices() {
-        // Start the FallDetectionService
-        serviceIntent = new Intent(this, FallDetectionService.class);
+        // Start the SensorService
+        serviceIntent = new Intent(this, SensorService.class);
         startService(serviceIntent);
 
         // Register the BroadcastReceiver
-        dataReceiver = new VehicleVibrationDataReceiver(); // Initialising the varibale
-        IntentFilter filter = new IntentFilter("VEHICLE_VIBRATION_DATA");// creating an instance of the filter that returns the vibrarion data
+        dataReceiver = new SensorDataReceiver(); // Initialising the varibale
+        IntentFilter filter = new IntentFilter("VEHICLE_SENSOR_DATA");// creating an instance of the filter that returns the vibrarion data
         registerReceiver(dataReceiver, filter); // registering the filter with our dataReceiver
     }
 
@@ -68,11 +70,21 @@ public class VehicleListActivity extends AppCompatActivity {
         }
     }
 
-    private class VehicleVibrationDataReceiver extends BroadcastReceiver {
+    private class SensorDataReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() != null && intent.getAction().equals("VEHICLE_VIBRATION_DATA")) {
+            if (intent.getAction() != null && intent.getAction().equals("VEHICLE_SENSOR_DATA")) {
                 // Receive the sensor data and update the UI if required.
+                AccelerometerData accelerometerData = (AccelerometerData) intent.getSerializableExtra("accelerometerData");
+
+                // Making changes in the UI based on sensor data
+                if (accelerometerData != null && accelerometerData.getMagnitude() < 9.81){
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.white, null));
+                }else {
+                    Toast.makeText(VehicleListActivity.this, "Danger!!!", Toast.LENGTH_SHORT).show();
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.red, null));
+                }
+
             }
         }
     }

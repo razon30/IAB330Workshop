@@ -1,4 +1,4 @@
-package com.example.fleetmanagement.DB;
+package com.example.fleetmanagement.DB.vehicle;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

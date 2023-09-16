@@ -2,6 +2,7 @@ package com.example.fleetmanagement;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,9 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fleetmanagement.DB.Vehicle;
-import com.example.fleetmanagement.DB.VehicleDao;
+import com.example.fleetmanagement.DB.sensor.TemperatureDao;
+import com.example.fleetmanagement.DB.sensor.TemperatureData;
+import com.example.fleetmanagement.DB.vehicle.Vehicle;
+import com.example.fleetmanagement.DB.vehicle.VehicleDao;
 import com.example.fleetmanagement.Utils.MyApp;
+
+import java.util.List;
 
 public class VehicleDetailsActivity extends AppCompatActivity {
 
@@ -31,8 +36,16 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         bindViews();
         initialisation();
         populatingVehicleDetails();
+        analyseTemperatureData();
+        analyseAccelerometerData();
 
+    }
 
+    private void analyseTemperatureData() {
+
+    }
+
+    private void analyseAccelerometerData() {
 
     }
 

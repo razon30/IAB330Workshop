@@ -6,7 +6,10 @@ import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -14,8 +17,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.fleetmanagement.DB.Vehicle;
-import com.example.fleetmanagement.DB.VehicleDao;
+import com.example.fleetmanagement.DB.vehicle.Vehicle;
+import com.example.fleetmanagement.DB.vehicle.VehicleDao;
+import com.example.fleetmanagement.DB.sensor.AccelerometerData;
+import com.example.fleetmanagement.SensorUtil.SensorService;
 import com.example.fleetmanagement.Utils.MyApp;
 import com.example.fleetmanagement.Utils.SharedPrefManager;
 import java.util.ArrayList;
@@ -29,6 +34,9 @@ public class VehicleListActivity extends AppCompatActivity {
     private VehicleAdapter vehicleAdapter;
     private Button btnSensorData;
 
+    Intent serviceIntent;
+    SensorDatReceiver dataReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +47,53 @@ public class VehicleListActivity extends AppCompatActivity {
         getDataFromDatabase();
         handleClickOnVehicleItem();
         manageRoleBasedFeatures();
+        manageSensorData();
 
     }
 
+    private void manageSensorData() {
+
+        serviceIntent = new Intent(this, SensorService.class);
+        startService(serviceIntent);
+
+        dataReceiver = new SensorDatReceiver();
+        IntentFilter filter = new IntentFilter("VEHICLE_SENSOR_DATA");
+        registerReceiver(dataReceiver, filter);
+
+    }
+
+
+    private class SensorDatReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() != null && intent.getAction().equals("VEHICLE_SENSOR_DATA")) {
+                // Receive the sensor data and update the UI if required.
+
+                AccelerometerData accelerometerData = (AccelerometerData)
+                        intent.getSerializableExtra("accelerometerData");
+                // Making changes in the UI based on sensor data
+                if (accelerometerData != null && accelerometerData.getMagnitude()
+                        < 9.81){
+
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor
+                            (R.color.white, null));
+                }else {
+//                    Toast.makeText(VehicleListActivity.this, "Danger!!!",
+//                            Toast.LENGTH_SHORT).show();
+
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor
+                            (R.color.red, null));
+                }
+
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(dataReceiver);
+    }
 
     private void manageRoleBasedFeatures() {
         if (SharedPrefManager.isAdmin()) {

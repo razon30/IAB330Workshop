@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fleetmanagement.DB.Vehicle;
+import com.example.fleetmanagement.DB.vehicle.Vehicle;
 
 import java.util.ArrayList;
 

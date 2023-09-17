@@ -32,7 +32,6 @@ public class VehicleListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button btnAddNewVehicle;
     private VehicleAdapter vehicleAdapter;
-    private Button btnSensorData;
 
     Intent serviceIntent;
     SensorDatReceiver dataReceiver;
@@ -130,7 +129,6 @@ public class VehicleListActivity extends AppCompatActivity {
     private void viewBinding() {
         recyclerView = findViewById(R.id.recyclerView);
         btnAddNewVehicle = findViewById(R.id.btnAddVehicle);
-        btnSensorData = findViewById(R.id.btnSensorData);
     }
 
     private void manageNewVehicleFunctionality() {

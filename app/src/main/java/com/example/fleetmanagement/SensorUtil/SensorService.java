@@ -94,7 +94,7 @@ public class SensorService extends Service implements SensorEventListener {
             // Save data into database
             TemperatureDao temperatureDao = MyApp.getAppDatabase().temperatureDao();
             AsyncTask.execute(()->{
-            temperatureDao.insertTemperature(temperatureData);
+                temperatureDao.insertTemperature(temperatureData);
             });
 
         }

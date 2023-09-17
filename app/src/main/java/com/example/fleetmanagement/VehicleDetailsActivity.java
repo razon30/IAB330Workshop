@@ -43,6 +43,8 @@ public class VehicleDetailsActivity extends AppCompatActivity {
 
     private void analyseTemperatureData() {
 
+
+
     }
 
     private void analyseAccelerometerData() {

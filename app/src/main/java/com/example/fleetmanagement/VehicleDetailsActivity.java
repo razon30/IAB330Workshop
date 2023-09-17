@@ -87,11 +87,13 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         tempLineChart.yAxis(0).title("Temperature (Degree celcius)");
         tempLineChart.xAxis(0).title("Timestamp");
         tempLineChart.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
+        tempLineChart.legend().enabled(true);
+        tempLineChart.legend().fontSize(13d);
+        tempLineChart.legend().padding(0d, 0d, 10d, 0d);
 
         // Initialising data for the chart
         List<DataEntry> seriesData = new ArrayList<>();
         Set set = Set.instantiate(); // Initiating AnyChart set to synch the custom data with AnyChart data
-
         Mapping series1Mapping = set.mapAs("{ x: 'x', value: 'value' }"); // Map for mapping values in X-Axis (time) with Y-axix (temperature)
 
         // Creating series for first car. For multiple car, OR multiple lines of data, we need to repeat all the following 'series1' codes for each of them
@@ -107,10 +109,6 @@ public class VehicleDetailsActivity extends AppCompatActivity {
                 .offsetX(5d)
                 .offsetY(5d);
 
-        tempLineChart.legend().enabled(true);
-        tempLineChart.legend().fontSize(13d);
-        tempLineChart.legend().padding(0d, 0d, 10d, 0d);
-
         tempChartView.setChart(tempLineChart); // adding the chart to the chart view
 
         TemperatureDao temperatureDao = MyApp.getAppDatabase().temperatureDao();
@@ -119,7 +117,6 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             // Handle the list of vehicles here
             for(TemperatureData temperatureData: temperatureDataList){
                 Date date = new Date(temperatureData.getTimeStamp());
-
                 // converting our data into AnyChart customdata and adding them to seriesData
                 seriesData.add(new CustomDataEntry(dateFormat.format(date), temperatureData.getTemp()));
             }
@@ -130,6 +127,14 @@ public class VehicleDetailsActivity extends AppCompatActivity {
         });
 
 
+
+    }
+
+    private class CustomDataEntry extends ValueDataEntry {
+
+        CustomDataEntry(String x, Number value) {
+            super(x, value);
+        }
 
     }
 
@@ -234,14 +239,6 @@ public class VehicleDetailsActivity extends AppCompatActivity {
             vehicleDao.delete(vehicle);
             finish();
         });
-    }
-
-    private class CustomDataEntry extends ValueDataEntry {
-
-        CustomDataEntry(String x, Number value) {
-            super(x, value);
-        }
-
     }
 
 }

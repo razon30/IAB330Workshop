@@ -57,20 +57,26 @@ public class BleClientActivity extends AppCompatActivity {
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
             Toast.makeText(this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Bluetooth is not enabled");
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+            return;
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
                 startScanning();
-
+            } else {
+                requestBluetoothPermissions();
+            }
+        }else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                startScanning();
             } else {
                 requestBluetoothPermissions();
             }
         }
+
     }
 
     private void startScanning() {
@@ -97,9 +103,8 @@ public class BleClientActivity extends AppCompatActivity {
         };
 
         // Check if this is the desired device based on its name or other criteria
-        if (ActivityCompat.checkSelfPermission(BleClientActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            //    requestBluetoothPermissions();
-            return;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(BleClientActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            requestBluetoothPermissions();
         }else {
             // Start scanning for nearby BLE devices
             bluetoothLeScanner.startScan(scanCallback);
@@ -110,16 +115,12 @@ public class BleClientActivity extends AppCompatActivity {
         String[] permissions = new String[0];
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             permissions = new String[]{
-                    Manifest.permission.BLUETOOTH_ADVERTISE,
-                    Manifest.permission.BLUETOOTH_CONNECT,
                     Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
         } else {
             permissions = new String[]{
-//                    android.Manifest.permission.BLUETOOTH,
-//                    Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
@@ -132,21 +133,19 @@ public class BleClientActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
-            int posPermission = 0;
+            int grandetPermission = 0;
             for (int i = 0; i < permissions.length; i++) {
                 String permission = permissions[i];
                 int grantResult = grantResults[i];
-
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted
                     // Handle accordingly
-                    posPermission++;
+                    grandetPermission++;
 
-                    if (posPermission == permissions.length) {
-                        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+                    // Checking whether the number of granted permission is equal to the number or permission we requested.
+                    if (grandetPermission == permissions.length) {
                         startScanning();
                     }
-
                 } else if (grantResult == PackageManager.PERMISSION_DENIED) {
                     // Permission denied
                     // Handle denial (explain, request again, etc.)

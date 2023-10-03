@@ -53,13 +53,17 @@ public class BleServerActivity extends AppCompatActivity {
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
             Toast.makeText(this, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Bluetooth is not enabled");
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADVERTISE) == PackageManager.PERMISSION_GRANTED) {
                 startAdvertising();
             } else {
                 requestBluetoothPermissions();
             }
+        }else {
+            startAdvertising();
         }
 
     }
@@ -80,7 +84,7 @@ public class BleServerActivity extends AppCompatActivity {
         manufacturerData.putShort((short) major);
         manufacturerData.putShort((short) minor);
 
-        UUID customData = DataEnCryptDecrypt.encryptToUUID("Device-1_Temp_20"); // 16 characters
+        UUID customData = DataEnCryptDecrypt.encryptToUUID("A 16 bit message"); // 16 characters, not more, not less
 
         AdvertiseData data = new AdvertiseData.Builder()
                 .setIncludeDeviceName(false)
@@ -104,11 +108,11 @@ public class BleServerActivity extends AppCompatActivity {
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
             requestBluetoothPermissions();
-            return;
+        }else {
+            bluetoothLeAdvertiser.startAdvertising(settings, data, advertiseCallback);
         }
-        bluetoothLeAdvertiser.startAdvertising(settings, data, advertiseCallback);
     }
 
 
@@ -117,20 +121,10 @@ public class BleServerActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             permissions = new String[]{
                     Manifest.permission.BLUETOOTH_ADVERTISE,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
             };
-        } else {
-            permissions = new String[]{
-                    android.Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-            };
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERMISSIONS);
         }
 
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERMISSIONS);
     }
 
 
@@ -138,20 +132,19 @@ public class BleServerActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
-            int posPermission = 0;
+            int grandetPermission = 0;
             for (int i = 0; i < permissions.length; i++) {
                 String permission = permissions[i];
                 int grantResult = grantResults[i];
-
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted
                     // Handle accordingly
-                    posPermission++;
+                    grandetPermission++;
 
-                    if (posPermission == permissions.length) {
+                    // Checking whether the number of granted permission is equal to the number or permission we requested.
+                    if (grandetPermission == permissions.length) {
                         startAdvertising();
                     }
-
                 } else if (grantResult == PackageManager.PERMISSION_DENIED) {
                     // Permission denied
                     // Handle denial (explain, request again, etc.)
@@ -166,7 +159,6 @@ public class BleServerActivity extends AppCompatActivity {
                     }
                 }
             }
-
 
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

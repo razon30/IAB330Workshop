@@ -148,6 +148,10 @@ public class BleServerActivity extends AppCompatActivity {
                     // Handle accordingly
                     posPermission++;
 
+                    if (posPermission == permissions.length) {
+                        startAdvertising();
+                    }
+
                 } else if (grantResult == PackageManager.PERMISSION_DENIED) {
                     // Permission denied
                     // Handle denial (explain, request again, etc.)
@@ -163,11 +167,6 @@ public class BleServerActivity extends AppCompatActivity {
                 }
             }
 
-            if (posPermission == permissions.length) {
-                startAdvertising();
-            } else {
-                showPermissionExplanationDialog();
-            }
 
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

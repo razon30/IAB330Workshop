@@ -75,6 +75,8 @@ public class BleClientActivity extends AppCompatActivity {
 
     private void startScanning() {
 
+        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+
         // Define a ScanCallback to handle scan results
         ScanCallback scanCallback = new ScanCallback() {
             @Override
@@ -116,8 +118,8 @@ public class BleClientActivity extends AppCompatActivity {
             };
         } else {
             permissions = new String[]{
-                    android.Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN,
+//                    android.Manifest.permission.BLUETOOTH,
+//                    Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
@@ -140,6 +142,11 @@ public class BleClientActivity extends AppCompatActivity {
                     // Handle accordingly
                     posPermission++;
 
+                    if (posPermission == permissions.length) {
+                        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+                        startScanning();
+                    }
+
                 } else if (grantResult == PackageManager.PERMISSION_DENIED) {
                     // Permission denied
                     // Handle denial (explain, request again, etc.)
@@ -153,13 +160,6 @@ public class BleClientActivity extends AppCompatActivity {
                         showPermissionExplanationSnackbar();
                     }
                 }
-            }
-
-            if (posPermission == permissions.length) {
-                bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-                startScanning();
-            } else {
-                showPermissionExplanationDialog();
             }
 
         } else {
